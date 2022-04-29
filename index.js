@@ -1,27 +1,14 @@
-import FileHandler from './file-handler.js';
-import http from 'http';
+import express from "express";
+import store from "./store.js";
+import math from "./math.js";
 
-const fh = new FileHandler();
+const app = express();
 
-http.createServer(async (req, res) => {
-    
-    if (req.url == '/read') {
-        
-        let content = await fh.read('store.dat');
+app.use(express.json());
 
-        res.write(content); 
-    } else if (req.url.startsWith('/write')) {
+app.use("/store", store);
+app.use("/math", math);
 
-        let content = req.url.substring(req.url.indexOf('/', '/write'.length - 1) + 1);
-
-        await fh.write('store.dat', content);
-
-        res.write('Store alterado');
-    } else {
-
-        res.write('Nothing here...');
-    }
-
-    res.statusCode = 200;
-    res.end();
-}).listen(8080);
+app.listen(8080, () => {
+    console.log("API started");
+});
